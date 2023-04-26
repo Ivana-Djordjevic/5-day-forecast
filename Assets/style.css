@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
+* {
+    font-family: 'Nova Mono', monospace;
+    box-sizing: border-box;
+    line-height: 20px;
+}
+
+body {
+    width: auto;
+}
+header {
+    background-color: rgb(212, 190, 233);
+    width: auto;
+}   
+
+.border {
+    border-style: solid;
+
+}
+
+.center {
+    text-align: center;
+}
+
+#sidebar {
+    position: absolute;
+    left: 10;
+    width: 200px;
+    min-width: 200px%;
+    height: 100%;
+    overflow-x: hidden;
+    background-color: #94dbdeb5;
+    padding: 20px;
+}
+
+button {
+    margin-top: 10px;
+}
+
+.current-weather {
+    text-align: center;
+    display: flex;
+    mar
+}
+
+.column {
+    column-count: 5;
+    column-gap: 30px;
+    /* column-rule-style: solid; */
+    flex-wrap: wrap;
+    display: inline-flex;
+}
+
+#weather-view {
+    position: relative;
+    left: 200px;
+    /* justify-content: center;
+    align-items: center; */
+}
+
+@media screen and (max-width: 992px) {body}
