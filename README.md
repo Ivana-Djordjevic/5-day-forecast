@@ -20,6 +20,7 @@ Acceptance Criteria
 - THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind -speed, and the humidity
 - WHEN I click on a city in the search history
 - THEN I am again presented with current and future conditions for that city
+**
 
 The images below will disaply what the application looks like:
 
@@ -40,8 +41,9 @@ An app that acquires weather info and displays them in a webpage with a 5 day fo
 
  ** from their README file 
 
- https://ucdavis.bootcampcontent.com/ucdavis-boot-camp/UCD-VIRT-FSF-PT-03-2023-U-LOLC/-/blob/main/06-Server-Side-APIs/02-Challenge/README.md
+-  https://ucdavis.bootcampcontent.com/ucdavis-boot-camp/UCD-VIRT-FSF-PT-03-2023-U-LOLC/-/blob/main/06-Server-Side-APIs/02-Challenge/README.md
 
+- background image: https://www.rawpixel.com/image/5805989 , has a commercial use license
 
 ## License
 

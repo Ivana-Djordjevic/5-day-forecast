@@ -1,46 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
-* {
-    font-family: 'Nova Mono', monospace;
-    box-sizing: border-box;
-    line-height: 20px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Kurale&display=swap');
 
-body {
-    width: auto;
-}
-header {
-    background-color: rgb(212, 190, 233);
-    width: auto;
-}   
+* {
+    font-family: 'Kurale', serif;    box-sizing: border-box;
+    line-height: 20px;
+    background-image: url("./images/glitter.png");
+} 
 
 .border {
     border-style: solid;
-
 }
 
 .center {
     text-align: center;
 }
 
-#sidebar {
-    position: absolute;
-    left: 10;
-    width: 200px;
-    min-width: 200px%;
-    height: 100%;
-    overflow-x: hidden;
-    background-color: #94dbdeb5;
-    padding: 20px;
-}
+ .flex {
+ display: flex;
+ }
 
-button {
+.margin {
     margin-top: 10px;
 }
 
-.current-weather {
-    text-align: center;
-    display: flex;
-    mar
+#sidebar {
+    left: 10;
+    width: 180px;
+    min-width: 180px;
+    /* height: 100vh; */
+    overflow-x: hidden;
+    padding: 10px;
+}
+
+#weather-view {
+    margin: 10px;
+}
+
+.background-color {
+    background-color: rgb(255, 255, 255);
 }
 
 .column {
@@ -49,13 +45,6 @@ button {
     /* column-rule-style: solid; */
     flex-wrap: wrap;
     display: inline-flex;
-}
-
-#weather-view {
-    position: relative;
-    left: 200px;
-    /* justify-content: center;
-    align-items: center; */
 }
 
 @media screen and (max-width: 992px) {body}
