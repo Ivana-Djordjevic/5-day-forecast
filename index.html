@@ -8,39 +8,51 @@
     <title>5 Day Forecast</title>
 </head>
 <body>
-
-    <header class="center border background-color">
+    <header class="center background-color border">
         <h1>
              5 Day Forecast
         </h1>
     </header>
 
     <div class="flex">
-
-    <div id="sidebar" class="center border background-color margin">
-        <form>
-        <input type="text" name="City" placeholder="Enter city name">
-        <button type="submit" class="margin">
-            submit
-        </button>
-    </form>
-    <p> \.0_o./</p>
+        <div id="sidebar" class="center background-color border margin">
+            <form id="city-form">
+            <input id="input" type="text" name="city" placeholder="Enter city name">
+            <button id="button" type="submit" class="margin">
+                submit
+            </button>
+        </form>
+        <p> \.0_o./</p>
+        </div>
+        
+        <main id="weather-view" class="margin">
+            <div id="current-weather" class="center background-color border">
+                <h2> 
+                    Today: 
+                </h2>
+                <section id="today-main">
+                </section>
+            </div>
+            <div id="five-day-forecast" class="column  margin">
+                <section id="day-one" class="days background-color border">
+                    1
+                </section>
+                <section id="day-two" class="days background-color border">
+                    2
+                </section>
+                <section id="day-three" class="days background-color border">
+                    3
+                </section>
+                <section id="day-four" class="days background-color border">
+                    4
+                </section>
+                <section id="day-five" class="days background-color border">
+                    5
+                </section>
+            </div>
+        </main>
     </div>
-    
-    <main id="weather-view" class="margin">
-        <div id="current-weather" class="center border background-color">
-            <h2> Today: </h2>
-            <section id="today-main"></section>
-        </div>
-        <div id="five-day-forecast" class="column  margin">
-            <section id="day-one" class="background-color border">1</section>
-            <section id="day-two" class="background-color border">2</section>
-            <section id="day-three" class="background-color border">3</section>
-            <section id="day-four" class="background-color border">4</section>
-            <section id="day-five" class="background-color border">5</section>
-
-        </div>
-    </main>
-</div>
+    <script src="./Assets/script.js">
+    </script>
 </body>
 </html>
