@@ -122,83 +122,55 @@ function getCurrentWeather(lat, lon) {
     });
 }
 
-//this function takes in data from getCurrentWeather for the current weather
 function filterTodayWeatherData(weatherData){
     // console.log('must pinpoint which data points you want from the following list', weatherData)
 }
 
-var dayNumber = 0
+let dayNumber = 0
 
-function displayForecast(forecastData) { // i want the 12pm results from below
- console.log('should be the 4, 12, 20, 28, and 36 arrays', forecastData)
+function displayForecast(forecastData) { 
+//  console.log('should be the 4, 12, 20, 28, and 36 arrays', forecastData)
     let dateForcasted = forecastData.dt_txt.split(' ')[0]
     let weatherIcon = forecastData.weather[0].icon
     let temperature = forecastData.main.temp
     let windSpeed = forecastData.wind.speed
     let humidity = forecastData.main.humidity
 
-    const daySection = document.querySelectorAll('.days'); //? how do i make them specific without being repetitive
-
+    const daySection = document.querySelectorAll('.days');
     const dayOneSection = daySection[dayNumber]
+    
     var dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
-
     dayEl.innerText = dateForcasted;
-
     dayOneSection.appendChild(dayEl);
 
     var dayEl = document.createElement('img');
-    dayEl.setAttribute('style', 'list-style:none;');
-
+    dayEl.setAttribute('style', 'background-color: rgb(148, 148, 212);border-radius: 20px;');
     dayEl.src = `https://openweathermap.org/img/wn/${weatherIcon}.png`;
-
     dayOneSection.appendChild(dayEl);
 
     var dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
-
-    dayEl.innerText = temperature + '*C';
-
+    dayEl.innerText = temperature + ' ºC';
     dayOneSection.appendChild(dayEl);
 
     var dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
-
-    dayEl.innerText = windSpeed + 'm/h';
-
+    dayEl.innerText = windSpeed + ' meters/sec';
     dayOneSection.appendChild(dayEl);
 
     var dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
-
-    dayEl.innerText = humidity + '%';
-
+    dayEl.innerText = 'humidity ' + humidity + ' %';
     dayOneSection.appendChild(dayEl);
 
-
-
-    
-    //////////////
- dayNumber++;
-//    daySection.forEach(fo÷recastData => { 
-
-//     for (let i=0; i < forecastData.length; i++) {
-//         daySection.appendChild.dayEl
-//     }
-//     // 
-//    });
-
-
-
-
+    dayNumber++;
 }
 
 //this data is an array of 40 weather objects received by getForecast
 function filterForecastData(forecastData){
-    // console.log('under the display forecast function', forecastData)
     let startIndex;
 // #region
-
         //dt._txt is currently an array, but we want to get a number value .: 
         // after splitting you get an array with the date and time seperated
         // call for index one because that's where the time number is, [0] is the date -- back in string form here
@@ -206,7 +178,6 @@ function filterForecastData(forecastData){
         // so then the i of startindex will be the days at 12pm   
         // increment by 8 to get the next day at 12pm
 // #endregion
-console.log(forecastData)    
 for (let i=0; i < forecastData.length; i++){
 
         if (forecastData[i].dt_txt.split(' ')[1].slice(0,2) === '12'){
@@ -215,11 +186,9 @@ for (let i=0; i < forecastData.length; i++){
             break  // if return, it goes to array 36 because that's the last 12pm
         }
     }
-        console.log(startIndex)
     for (let i = startIndex; i < forecastData.length; i+=8){
-        console.log('forecast data received', forecastData[i])   // why is it not working anymore
         
-        displayForecast(forecastData[i]); // should only display the ones at 12pm 
+        displayForecast(forecastData[i]); 
     }
 }
 
@@ -229,21 +198,17 @@ function getForecastData(lat, lon) {
 
     fetch(weatherUrl)
         .then(function (response) {
-        //   console.log(response);
-        if (!response.ok) {
-            // console.log('foerecast fetch response is not ok');
-            throw response.json();
-        }
-        //   console.log('forecast API fetched successfully');
-        return response.json();
-        })
+            if (!response.ok) {
+                throw response.json();
+            }
+            return response.json();
+            })
+
         .then(function (forecastData) {
-            // console.log('forecast data:', forecastData)
-            filterForecastData(forecastData.list)
-            // since it was an object, we selected the list key, so that he display function can choose from arrays 
+            filterForecastData(forecastData.list);
             });
 }
 
-fetchGeoInfo('Sacramento');
+// fetchGeoInfo('Sacramento');
 
 // loadStorage()

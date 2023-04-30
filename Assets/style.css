@@ -37,7 +37,7 @@
 }
 
 .background-color {
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(246, 246, 246);
 }
 
 .column {
@@ -46,6 +46,11 @@
     /* column-rule-style: solid; */
     flex-wrap: wrap;
     display: inline-flex;
+}
+
+.s {
+    color: rgb(148, 148, 212);
+    
 }
 
 @media screen and (max-width: 992px) {body}
