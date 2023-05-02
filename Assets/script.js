@@ -36,7 +36,7 @@ function citySearch(event) {
 
 function fetchGeoInfo(city) {
 
-    const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q='${city}&appid=${myApiKey}`;
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q='${city}&appid=${myApiKey}`;
 
     fetch(geoUrl)
         .then(function (response) {
@@ -60,7 +60,7 @@ function fetchGeoInfo(city) {
 }
 
 function getCurrentWeather(lat, lon) {
-    const weatherUrl = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
     
     fetch(weatherUrl)
     .then(function (response) {
@@ -150,7 +150,7 @@ for (let i=0; i < forecastData.length; i++){
 
 function getForecastData(lat, lon) {
 
-    const weatherUrl = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
 
     fetch(weatherUrl)
         .then(function (response) {
