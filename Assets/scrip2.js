@@ -1,25 +1,4 @@
-
-
-const myApiKey = '0fffcdb9d9732daced94e2c5d89e2a50';
-const cityInputValue = document.getElementById('city-form');
-
-cityInputValue.addEventListener('submit', citySearch);
-
-// function saveToStorage(newCity){
-//     const history = JSON.parse(localStorage.getItem('history'))
-//     history.push(newCity)
-//     //keep your datatype in mind for how you want to save your city
-//     localStorage.setItem('history', JSON.stringify(history))
-// }
-
-// function loadStorage(){
-//     const history = JSON.parse(localStorage.getItem('history'))
-//     if(!history){
-//         localStorage.setItem('history', JSON.stringify([]))
-//     }
-// }
-
-function citySearch(event) {
+function oncitySearch(event) {
     event.preventDefault();
 
     const inputBox = document.getElementById('input');
@@ -48,15 +27,19 @@ function fetchGeoInfo(city) {
             }
             // console.log('it fetched successfully');
             return response.json();
-            })
+        })
 
         .then(function (geoData) {
         // console.log('this is what was recevied from the geocall', geoData);
         //save to storage here
         //(cuz valid city searched confirmed)
-        getCurrentWeather(geoData[0].lat, geoData[0].lon);
-        getForecastData(geoData[0].lat, geoData[0].lon);
-        });
+            getCurrentWeather(geoData[0].lat, geoData[0].lon);
+            getForecastData(geoData[0].lat, geoData[0].lon);
+        })
+
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 function getCurrentWeather(lat, lon) {
@@ -95,27 +78,27 @@ function displayForecast(forecastData) {
     const daySection = document.querySelectorAll('.days');
     const dayOneSection = daySection[dayNumber]
     
-    var dayEl = document.createElement('li');
+    const dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
     dayEl.innerText = dateForcasted;
     dayOneSection.appendChild(dayEl);
 
-    var dayEl = document.createElement('img');
+    const dayEl = document.createElement('img');
     dayEl.setAttribute('style', 'background-color: rgb(148, 148, 212);border-radius: 20px;');
     dayEl.src = `https://openweathermap.org/img/wn/${weatherIcon}.png`;
     dayOneSection.appendChild(dayEl);
 
-    var dayEl = document.createElement('li');
+    const dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
     dayEl.innerText = temperature + ' ºC';
     dayOneSection.appendChild(dayEl);
 
-    var dayEl = document.createElement('li');
+    const dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
     dayEl.innerText = windSpeed + ' meters/sec';
     dayOneSection.appendChild(dayEl);
 
-    var dayEl = document.createElement('li');
+    const dayEl = document.createElement('li');
     dayEl.setAttribute('style', 'list-style:none;');
     dayEl.innerText = 'humidity ' + humidity + ' %';
     dayOneSection.appendChild(dayEl);
@@ -135,6 +118,9 @@ function filterForecastData(forecastData){
         // increment by 8 to get the next day at 12pm
 // #endregion
 for (let i=0; i < forecastData.length; i++){
+    const dateTimeNumber = forecastData[i].dt
+    const forecastDate = new Date(dateTimeNumber);
+    const forecastHour = forecastDate.getHours();
 
         if (forecastData[i].dt_txt.split(' ')[1].slice(0,2) === '12'){
             startIndex = i
@@ -162,9 +148,11 @@ function getForecastData(lat, lon) {
 
         .then(function (forecastData) {
             filterForecastData(forecastData.list);
-            });
+            })
+
+        .catch((error) => {
+            console.log(error);
+        })
 }
 
-// fetchGeoInfo('Sacramento');
-
-// loadStorage()
+fetchGeoInfo('Sacramento');
