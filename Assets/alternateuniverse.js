@@ -41,14 +41,14 @@ function getCityInputValue() {
 
 function fetchCityCoordinates(cityInputValue) {
 
-    const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q='${cityInputValue}&appid=${myApiKey}`;
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q='${cityInputValue}&appid=${myApiKey}`;
     const geoResponsePromise = fetch(geoUrl);
     const geoDataPromise = geoResponsePromise.then(function (response) {
 
             if (!response.ok) {
-                throw response.json(); //why not throw error? is the response at this point already considered to be the error?
+                throw response.json(); 
             }
-            console.log(response); // where you at my bro
+            // console.log(response); 
             return response.json();
         })
 
@@ -62,23 +62,6 @@ function fetchCityCoordinates(cityInputValue) {
     return coordinatesPromise;
 }
 
-function fetchForecast(coordinates) { 
-    const lat = coordinates.lat;
-    const lon = coordinates.lon;
-
-    const weatherUrl = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
-
-    const forecastResponsePromise = fetch(weatherUrl);
-    const forecastDataPromise = forecastResponsePromise.then(function (response) {
-            if (!response.ok) {
-                throw response.json();
-            }
-            return response.json();
-        })
-    const forecastPromise = forecastDataPromise.then(filterForecastData);
-    return forecastPromise; //?
-}
-
 function filterForecastData (json) { //CREATE array of data items
     const forecastDataList = json.list;
 
@@ -87,6 +70,28 @@ function filterForecastData (json) { //CREATE array of data items
         return forecastDataList;
         console.log(forecastDataList);
     }
+}
+
+function fetchForecast(coordinates) { 
+    const lat = coordinates.lat;
+    const lon = coordinates.lon;
+    // console.log(lat);
+
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
+
+    const forecastResponsePromise = fetch(weatherUrl);
+    const forecastDataPromise = forecastResponsePromise.then(function (response) {
+            if (!response.ok) {
+                throw response.json();
+            }
+            console.log(response); 
+            return response.json();
+        })
+    const forecastPromise = forecastDataPromise.then(function (forecastData) {
+        filterForecastData(forecastData.list) // maybe i don't need the .list here, cuz im accessing it again at like 66
+        console.log(forecastPromise)
+    })
+    return forecastPromise; //?
 }
 
 // function processForecastData (forecastDataList) {
