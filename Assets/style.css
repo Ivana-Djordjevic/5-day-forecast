@@ -53,4 +53,8 @@
     
 }
 
+.unstyled-list-items {
+    list-style: none;
+}
+
 @media screen and (max-width: 992px) {body}

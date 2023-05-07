@@ -134,7 +134,7 @@ function filterForecastData(forecastData){
         // so then the i of startindex will be the days at 12pm   
         // increment by 8 to get the next day at 12pm
 // #endregion
-for (let i=0; i < forecastData.length; i++){
+    for (let i=0; i < forecastData.length; i++){
 
         if (forecastData[i].dt_txt.split(' ')[1].slice(0,2) === '12'){
             startIndex = i

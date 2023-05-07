@@ -26,11 +26,15 @@ async function onCitySearch(event) {
     event.preventDefault();
     const cityName = getCityInputValue();
     const coordinates = await fetchCityCoordinates(cityName);
-    const ForecastData = await fetchForecast(coordinates);
+    const forecastData = await fetchForecast(coordinates);
+    // console.log(forecastData);
+    const filterData = filterForecastData(forecastData);
+    const parse = parseForecastData(filterData);
+    console.log(parse)
+    const render = renderForecastData(parse);
 }
 
 function getCityInputValue() {
-
     const cityInputValue = $('input').val().trim();
     
     if (!cityInputValue) {
@@ -60,17 +64,7 @@ function fetchCityCoordinates(cityInputValue) {
         }
     })
     return coordinatesPromise;
-}
 
-function filterForecastData (json) { //CREATE array of data items
-    const forecastDataList = json.list;
-
-    for (let i=0; i < forecastDataList.length; i++) {
-        if (i%8 === 0) 
-        return forecastDataList;
-        console.log(forecastDataList);
-    }
-}
 
 function fetchForecast(coordinates) { 
     const lat = coordinates.lat;
@@ -84,113 +78,79 @@ function fetchForecast(coordinates) {
             if (!response.ok) {
                 throw response.json();
             }
-            console.log(response); 
+            // console.log(response); 
             return response.json();
         })
-    const forecastPromise = forecastDataPromise.then(function (forecastData) {
-        filterForecastData(forecastData.list) // maybe i don't need the .list here, cuz im accessing it again at like 66
-        console.log(forecastPromise)
-    })
-    return forecastPromise; //?
+
+    return forecastDataPromise; //?
 }
 
-// function processForecastData (forecastDataList) {
-
-//     let dateForcasted = forecastData.dt_txt.split(' ')[0];
-//     let weatherIcon = forecastData.weather[0].icon;
-//     let temperature = forecastData.main.temp;
-//     let windSpeed = forecastData.wind.speed;
-//     let humidity = forecastData.main.humidity;
-
-//     const filteredForecastArray = new Array();
-
-//     for (let i=0; i < forecastDataList.length; i++) {
-//         filteredForecastArray.push(dateForcasted, weatherIcon, temperature, windSpeed, humidity)
-//     }
-
-//     array.forEach(element => {
-        
-//     });
-// }
-
-//     const filteredForecastArray = new Array(dateForcasted, weatherIcon, temperature, windSpeed, humidity);
-
-//     for (let i=0; i <forecastDataList.length; i++) {
-//         return filteredForecastArray;
-//     }
-//     return filteredForecastArray; //?
-// }
-
-// function renderForecastData (filteredForecastArray) {
-
-//     const daySection = $('.days');
-//     const dayOneSection = daySection[dayNumber]
-
-//     for (let i=0; i < filteredForecastArray; i += 5) {
-
-//     }
-// }
-
-function processForecastData (forecastDataList) {
-
-    let dateForcasted = forecastDataList.dt_txt.split(' ')[0];
-    let weatherIcon = forecastDataList.weather[0].icon;
-    let temperature = forecastDataList.main.temp;
-    let windSpeed = forecastDataList.wind.speed;
-    let humidity = forecastDataList.main.humidity;
-
-    // so this should make an array and have the variables stored under object literals
-    // that way you can access data wanted through them 
-
-    const filteredForecastArray = new Array();
+function filterForecastData (json) { //CREATE array of data items
+    const forecastDataList = json.list;
+    const forecastDataArray = [];
 
     for (let i=0; i < forecastDataList.length; i++) {
-        filteredForecastArray.push(dateForcasted, weatherIcon, temperature, windSpeed, humidity)
-        return filteredForecastArray;
-     }
+        const isEighthIndex = i%8 === 0;
+        if (isEighthIndex) {
+            forecastDataArray.push(forecastDataList[i]);
+        // console.log(forecastDataList);
+        } 
+    }
+    return forecastDataArray;
+}
+
+function getConsolidatedForecastData (forecastDataList) {
+
+    const dateForecasted = forecastDataList.dt_txt.split(' ')[0];
+    const weatherIcon = forecastDataList.weather[0].icon;
+    const temperature = forecastDataList.main.temp;
+    const windSpeed = forecastDataList.wind.speed;
+    const humidity = forecastDataList.main.humidity;
+
+    return {dateForecasted, weatherIcon, temperature, windSpeed, humidity};
 }
  
-function renderForecastData (filteredForecastArray, index, i) {
+function parseForecastData(forecastDataArray) {
+    return forecastDataArray.map(getConsolidatedForecastData);
+}
 
-    // const daySection = $('.days');
-    // const dayOneSection = daySection[dayNumber]
-
-    // const imgEl = document.createElement('img');
-    // imgEl.attr('style', 'background-color: rgb(148, 148, 212);border-radius: 20px;');
-    // imgEl.src = `https://openweathermap.org/img/wn/${weatherIcon}.png`;
-    // dayOneSection.appendChild(imgEl);
-
-    // const dayEL = document.createElement('li');
-    // dayEl.attr('style', 'list-style:none;');
-    
-    // for (let i=0; i <)
-
+function renderForecastData (forecastDataArray) {
     const forecastParentNode = $('#five-day-forecast');
+    // console.log(forecastParentNode)
+    for (let i=0; i < forecastDataArray.length; i++) {
+        const forecastChildNodes = renderForecastDataItem(forecastDataArray[i]);
+        forecastParentNode.append(forecastChildNodes);
+    }
+}
 
+function renderForecastDataItem (dataItem){
+    // console.log(dataItem);
     const forecastChildNodes = document.createElement('section');
-    forecastChildNodes.addClass('days center background-color border');
 
-    forecastParentNode.appendChild(forecastChildNodes);
+    forecastChildNodes.setAttribute('id', dataItem.dateForecasted);
+
+    forecastChildNodes.className = forecastChildNodes.className 
+        + 'days center background-color border';
 
     const dateForecastEl = document.createElement('li');
-    dateForecastEl.attr('style', 'list-style:none;');
-    dateForecastEl.innerText = filteredForecastArray[index].dateForecasted[i];
+    dateForecastEl.setAttribute('style', 'list-style:none;');
+    dateForecastEl.innerText = dataItem.dateForecasted;
 
     const iconForecastEl = document.createElement('img');
-    iconForecastEl.attr('style', 'background-color: rgb(148, 148, 212);border-radius: 20px;');
-    iconForecastEl.src = `https://openweathermap.org/img/wn/${weatherIcon}.png`;
+    iconForecastEl.setAttribute('style', 'background-color: rgb(148, 148, 212);border-radius: 20px;');
+    iconForecastEl.src = `https://openweathermap.org/img/wn/${dataItem.weatherIcon}.png`;
 
     const temperatureEl = document.createElement('li');
-    temperatureEl.attr('style', 'list-style:none;');
-    temperatureEl.innerText = `${filteredForecastArray[index].temperature[i]} ºC`;
+    temperatureEl.setAttribute('style', 'list-style:none;');
+    temperatureEl.innerText = `${dataItem.temperature} ºC`;
 
     const windEl = document.createElement('li');
-    windEl.attr('style', 'list-style:none;');
-    windEl.innerText = `${filteredForecastArray[index].windSpeed[i]} m/sec`;
+    windEl.setAttribute('style', 'list-style:none;');
+    windEl.innerText = `${dataItem.windSpeed} m/sec`;
 
     const humidityEl = document.createElement('li');
-    humidityEl.attr('style', 'list-style:none;');
-    humidityEl.innerText = `humidity: ${filteredForecastArray[index].humidity[i]} %`;
+    humidityEl.setAttribute('style', 'list-style:none;');
+    humidityEl.innerText = `humidity: ${dataItem.humidity} %`;
 
     forecastChildNodes.appendChild(dateForecastEl);
     forecastChildNodes.appendChild(iconForecastEl);
@@ -198,7 +158,5 @@ function renderForecastData (filteredForecastArray, index, i) {
     forecastChildNodes.appendChild(windEl);
     forecastChildNodes.appendChild(humidityEl);
 
-    for (let i=0; i < filteredForecastArray.length, i++;) {
-        forecastParentNode.appendChild(forecastChildNodes)
-    }
+    return forecastChildNodes;
 }
