@@ -41,7 +41,12 @@ While I have met the requirements for this project, I believe that there is stil
 - Resolve the problem of a random dot appearing next to the sidebar upon launching the application or refreshing the page. This behavior is unintended and requires fixing.
 
 As a point of reference, the images below demonstrate the application's interface.
-
+Main:
+![main](https://github.com/runningaroundintheabyss/5-day-forecast/assets/127266659/d54df6ec-311e-4e0a-b0fb-4cc5ad49afc6)
+City searched:
+![citySearched](https://github.com/runningaroundintheabyss/5-day-forecast/assets/127266659/72fe0ca2-bed1-419a-9333-10c03f4fb61a)
+History:
+![historyDisplayed](https://github.com/runningaroundintheabyss/5-day-forecast/assets/127266659/58156e22-1b17-4c9b-a29f-fb709772eb30)
 
 Here is the link: https://runningaroundintheabyss.github.io/5-day-forecast/
 
