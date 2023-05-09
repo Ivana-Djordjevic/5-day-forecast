@@ -13,33 +13,35 @@
              5 Day Forecast
         </h1>
     </header>
-
+    
     <div class="flex">
         <div id="sidebar" class="center background-color border margin">
             <form id="city-form">
             <input id="input" type="text" name="city" placeholder="Enter city name">
             <input id="button" type="submit" class="margin">
-                submit
             </input>
         </form>
-        <p> \.0_o./ </p>
+        <p> 
+            \.0_o./ 
+        </p>
+        <section id="search-history" class="center ">
+            <h3>
+                Search History 
+            </h3>
+    
+        </section>
         </div>
-        
         <main id="weather-view" class="margin">
             <div id="current-weather" class="center background-color border">
-                <h2> 
-                    Today: 
-                </h2>
-                <section id="today-main">
-                </section>
             </div>
             <div id="five-day-forecast" class="column margin">
-             
             </div>
         </main>
     </div>
     <script 
         src="https://code.jquery.com/jquery-3.4.1.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js">
     </script>
     <script 
         src="./Assets/alternateuniverse.js">

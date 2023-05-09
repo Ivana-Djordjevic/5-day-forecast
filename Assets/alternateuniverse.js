@@ -1,46 +1,63 @@
 
 
-// function saveToStorage(newCity){
-//     const history = JSON.parse(localStorage.getItem('history'))
-//     history.push(newCity)
-//     //keep your datatype in mind for how you want to save your city
-//     localStorage.setItem('history', JSON.stringify(history))
-// }
+function saveToStorage(newCity){
+    const history = JSON.parse(localStorage.getItem('history'));
+        if(history.includes(newCity)){
+            return;
+        }
+    history.push(newCity)
+        if(history.length > 5){
+            history.shift()
+        }
+    localStorage.setItem('history', JSON.stringify(history));
+    loadStorage();
+}
 
-// function loadStorage(){
-//     const history = JSON.parse(localStorage.getItem('history'))
-//     if(!history){
-//         localStorage.setItem('history', JSON.stringify([]))
-//     }
-// }
+function loadStorage(){
+    const history = JSON.parse(localStorage.getItem('history'));
+        if(!history){
+            localStorage.setItem('history', JSON.stringify([]))
+            return;
+        }
+    const searchHistoryEl = $('#search-history');
+    searchHistoryEl.innerText = '';
+
+    history.forEach(city =>{
+        const button = document.createElement('button');
+        button.innerText = city;
+        button.addEventListener('click', function(){
+            onCitySearch(city)
+        })
+        searchHistoryEl.append(button);
+    })
+}
 
 const myApiKey = '0fffcdb9d9732daced94e2c5d89e2a50';
 
 $().ready(function(){
-    const cityInputValue = document.getElementById('city-form');
-
-    cityInputValue.addEventListener('submit', onCitySearch);
+    const cityInputValue = $('#city-form');
+    cityInputValue.on('submit', getCityInputValue); 
 })
 
-async function onCitySearch(event) { 
-    event.preventDefault();
-    const cityName = getCityInputValue();
+async function onCitySearch(cityName) { 
     const coordinates = await fetchCityCoordinates(cityName);
+    const weatherData = await fetchWeather(coordinates);
+    const consolidatedData = consolidateWeatherData(weatherData);
+    const renderWeather= renderWeatherData(consolidatedData);
     const forecastData = await fetchForecast(coordinates);
-    // console.log(forecastData);
     const filterData = filterForecastData(forecastData);
     const parse = parseForecastData(filterData);
-    console.log(parse)
     const render = renderForecastData(parse);
 }
 
-function getCityInputValue() {
+function getCityInputValue(event) {
+    event.preventDefault();
+
     const cityInputValue = $('input').val().trim();
-    
-    if (!cityInputValue) {
-        throw new Error('No input.');
-    }
-    return cityInputValue;
+        if (!cityInputValue) {
+            throw new Error('No input.');
+        }
+    onCitySearch(cityInputValue) 
 }
 
 function fetchCityCoordinates(cityInputValue) {
@@ -48,54 +65,125 @@ function fetchCityCoordinates(cityInputValue) {
     const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q='${cityInputValue}&appid=${myApiKey}`;
     const geoResponsePromise = fetch(geoUrl);
     const geoDataPromise = geoResponsePromise.then(function (response) {
-
             if (!response.ok) {
                 throw response.json(); 
             }
-            // console.log(response); 
             return response.json();
         })
-
     const coordinatesPromise = geoDataPromise.then(function (json) {
-        // console.log(json);
         return {
             lat: json[0].lat,
             lon: json[0].lon,
         }
     })
     return coordinatesPromise;
+}
 
+function fetchWeather(coordinates) {
+    const lat = coordinates.lat;
+    const lon = coordinates.lon; 
+
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
+
+    const weatherResponsePromise = fetch(weatherUrl);
+    const weatherDataPromise = weatherResponsePromise.then(function (response) {
+        if (!response.ok) {
+            throw response.json();
+        }
+        return response.json();
+        })
+    return weatherDataPromise; 
+}
+function consolidateWeatherData (weatherJson) {
+    const weatherData = weatherJson;
+    const cityName = weatherData.name;
+    saveToStorage(cityName);
+
+    const date = dayjs().format('YYYY, dddd MMM D'); 
+    const weatherIcon = weatherData.weather[0].icon;
+    const temperature = weatherData.main.temp;
+    const windspeed = weatherData.wind.speed;    
+    const humidity = weatherData.main.humidity;
+
+    const weatherDataArray = [cityName, weatherIcon, temperature, windspeed, humidity, date];
+    return weatherDataArray;
+}
+
+function renderWeatherData(data) {
+    //#region
+    // update: this morning i realized that although this is the easiest most direct way to go about it, 
+    // it is not consistent with how the forecast data was extracted.
+    // .: code needs to be optimized
+    //this one seems kinda long, but is there  a point to breaking it down if 
+    // all the data can be easily reached in here
+    // the more it's broken down, the more i have to pass data around
+    // maybe for consistency i could arrange them in the same style as the 5 day forecast
+    //TBD, functional for now, optimize later
+    //#endregion    
+    const weatherParentNode = $('#current-weather');
+    weatherParentNode.empty();
+    const weatherChildNodes = document.createElement('section');
+
+    weatherChildNodes.className = weatherChildNodes.className 
+    + 'center background-color'; 
+
+    weatherParentNode.append(weatherChildNodes);
+
+    const nameEl = document.createElement('h2');
+    nameEl.innerText = data[0];
+
+    const dateEl = document.createElement('li');
+    dateEl.setAttribute('style', 'list-style:none;');
+    dateEl.innerText = `${data[5]}`;
+
+    const iconEl = document.createElement('img');
+    iconEl.setAttribute('style', 'background-color: rgb(148, 148, 212);border-radius: 20px;');
+    iconEl.src = `https://openweathermap.org/img/wn/${data[1]}.png`;
+
+    const temperatureEl = document.createElement('li');
+    temperatureEl.setAttribute('style', 'list-style:none;');
+    temperatureEl.innerText = `${data[2]} ºC`;
+
+    const windEl = document.createElement('li');
+    windEl.setAttribute('style', 'list-style:none;');
+    windEl.innerText = `${data[3]} m/sec`;
+
+    const humidityEl = document.createElement('li');
+    humidityEl.setAttribute('style', 'list-style:none;');
+    humidityEl.innerText = `humidity: ${data[4]} %`;
+
+    weatherChildNodes.appendChild(nameEl);
+    weatherChildNodes.appendChild(dateEl);
+    weatherChildNodes.appendChild(iconEl);
+    weatherChildNodes.appendChild(temperatureEl);
+    weatherChildNodes.appendChild(windEl);
+    weatherChildNodes.appendChild(humidityEl);
+}
 
 function fetchForecast(coordinates) { 
     const lat = coordinates.lat;
     const lon = coordinates.lon;
-    // console.log(lat);
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
 
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${myApiKey}&units=metric`;
-
-    const forecastResponsePromise = fetch(weatherUrl);
+    const forecastResponsePromise = fetch(forecastUrl);
     const forecastDataPromise = forecastResponsePromise.then(function (response) {
             if (!response.ok) {
                 throw response.json();
             }
-            // console.log(response); 
             return response.json();
         })
-
-    return forecastDataPromise; //?
+    return forecastDataPromise; 
 }
 
-function filterForecastData (json) { //CREATE array of data items
+function filterForecastData (json) { 
     const forecastDataList = json.list;
     const forecastDataArray = [];
-
-    for (let i=0; i < forecastDataList.length; i++) {
-        const isEighthIndex = i%8 === 0;
-        if (isEighthIndex) {
-            forecastDataArray.push(forecastDataList[i]);
-        // console.log(forecastDataList);
-        } 
-    }
+        for (let i=0; i < forecastDataList.length; i++) {
+            const isEighthIndex = i%8 === 0;
+            if (isEighthIndex) {
+                forecastDataArray.push(forecastDataList[i]);
+            } 
+        }
     return forecastDataArray;
 }
 
@@ -116,21 +204,20 @@ function parseForecastData(forecastDataArray) {
 
 function renderForecastData (forecastDataArray) {
     const forecastParentNode = $('#five-day-forecast');
-    // console.log(forecastParentNode)
-    for (let i=0; i < forecastDataArray.length; i++) {
-        const forecastChildNodes = renderForecastDataItem(forecastDataArray[i]);
-        forecastParentNode.append(forecastChildNodes);
-    }
+    forecastParentNode.empty();
+        for (let i=0; i < forecastDataArray.length; i++) {
+            const forecastChildNodes = renderForecastDataItem(forecastDataArray[i]);
+            forecastParentNode.append(forecastChildNodes);
+        }
 }
 
 function renderForecastDataItem (dataItem){
-    // console.log(dataItem);
     const forecastChildNodes = document.createElement('section');
 
     forecastChildNodes.setAttribute('id', dataItem.dateForecasted);
 
     forecastChildNodes.className = forecastChildNodes.className 
-        + 'days center background-color border';
+        + 'center background-color border margin-bottom';
 
     const dateForecastEl = document.createElement('li');
     dateForecastEl.setAttribute('style', 'list-style:none;');
@@ -160,3 +247,5 @@ function renderForecastDataItem (dataItem){
 
     return forecastChildNodes;
 }
+
+loadStorage();
