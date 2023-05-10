@@ -1,5 +1,3 @@
-
-
 function saveToStorage(newCity){
     const history = JSON.parse(localStorage.getItem('history'));
         if(history.includes(newCity)){
@@ -43,9 +41,12 @@ async function onCitySearch(cityName) {
     const coordinates = await fetchCityCoordinates(cityName);
     const weatherData = await fetchWeather(coordinates);
     const consolidatedData = consolidateWeatherData(weatherData);
+
     const renderWeather= renderWeatherData(consolidatedData);
+
     const forecastData = await fetchForecast(coordinates);
     const filterData = filterForecastData(forecastData);
+
     const parse = parseForecastData(filterData);
     const render = renderForecastData(parse);
 }
@@ -111,14 +112,12 @@ function consolidateWeatherData (weatherJson) {
 
 function renderWeatherData(data) {
     //#region
-    // update: this morning i realized that although this is the easiest most direct way to go about it, 
-    // it is not consistent with how the forecast data was extracted.
-    // .: code needs to be optimized
     //this one seems kinda long, but is there  a point to breaking it down if 
     // all the data can be easily reached in here
     // the more it's broken down, the more i have to pass data around
     // maybe for consistency i could arrange them in the same style as the 5 day forecast
     //TBD, functional for now, optimize later
+    // later, find a way to not create elements each time
     //#endregion    
     const weatherParentNode = $('#current-weather');
     weatherParentNode.empty();
