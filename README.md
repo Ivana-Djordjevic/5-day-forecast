@@ -38,7 +38,7 @@ While I have met the requirements for this project, I believe there is still roo
 
 - <u>user experience:</u> to enhance the user experience of the application, it may be advisable to incorporate a feature that allows users to easily erase their search history. Although this can be accomplished through coding in the console, individuals who lack coding knowledge may encounter difficulty. As such, the addition of a button that can conveniently perform this task can improve the accessibility and user-friendliness of the application.
 
-- <u>bugs:</u> address the issue where the application is displaying only the 5 most recent search entries upon refreshing the page. This behavior is unintended and requires fixing.
+- <u>bugs:</u> address the issue where the application is displaying more than the 5 most recent search entries upon refreshing the page. This behavior is unintended and requires fixing.
 
 - <u>bugs:</u> Resolve the problem of a random dot appearing next to the sidebar upon launching the application or refreshing the page. This behavior is unintended and requires fixing.
 
