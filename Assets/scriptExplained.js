@@ -1,13 +1,40 @@
+// a function that maintains a history of cities in local storage. 
+//It prevents duplicates, limits the history to 5 entries, and updates the local storage accordingly. 
 function saveToStorage(newCity){
+    // #region
+    // this variable retrieves the value paired with the key 'history' from local storage, 
+    // and turns it to a JS object
+    // #endregion
     const history = JSON.parse(localStorage.getItem('history'));
+        // #region
+        // checks  if the new value of newCity is already present in the local storage
+        // includes() is method that determines whether an array includes a certain value among its entries, returning true or false as appropriate.
+        // If it is, the function immediately returns without making any changes. This is to prevent duplicate entries in the history.
+        // #endregion
         if(history.includes(newCity)){
             return;
         }
+    // #region
+    // If the newCity is not already in the history, this line adds the newCity to the end of the history array using the push() method.
+    // the push() method adds the newCity to the end of an array
+    // #endregion
     history.push(newCity)
+    // #region
+    // This checks if the length of the history array is greater than 5. 
+    // If it is, the shift() method is used to remove the first (oldest) entry from the array. 
+    // This ensures that the history doesn't exceed a maximum of 5 entries.
+    // #endregion
         if(history.length > 5){
             history.shift()
         }
+    // #region
+    // After the modifications to the history array, 
+    // this line stores the updated array back in the local storage under the key 'history'. 
+    // The array is converted to a JSON string using JSON.stringify() before saving.
+    // #endregion
     localStorage.setItem('history', JSON.stringify(history));
+
+    // calling loadStorage() is necessary to refresh the displayed search history to reflect the changes made by the saveToStorage() function.
     loadStorage();
 }
 
@@ -32,15 +59,17 @@ function loadStorage(){
 
 const myApiKey = '0fffcdb9d9732daced94e2c5d89e2a50';
 
+// this function waits for the DOM to be fully loaded, 
+// selects a form element with the ID "city-form," and adds a submit event listener to it. 
+// When the form is submitted, it calls the getCityInputValue function
 $().ready(function(){
     const cityInputValue = $('#city-form');
     cityInputValue.on('submit', getCityInputValue); 
 })
 
+//this is where all the magic happens
 async function onCitySearch(cityName) { 
     const coordinates = await fetchCityCoordinates(cityName);
-    // function that displays all the options
-    // followed by a click event listener to proceed to the next steps
     const weatherData = await fetchWeather(coordinates);
     const consolidatedData = consolidateWeatherData(weatherData);
 
@@ -54,27 +83,53 @@ async function onCitySearch(cityName) {
 }
 
 function getCityInputValue(event) {
+    //This prevents the browser from reloading the page, which is the default behavior when a form is submitted.
     event.preventDefault();
 
+    // This line uses jQuery to select an <input> element on the page and retrieves the value of the selected input 
+    // The .val() method gets the current value of the input, 
+    // and .trim() is used to remove any leading and trailing whitespace from the value 
+    // The resulting trimmed value is stored in the cityInputValue variable.
     const cityInputValue = $('input').val().trim();
+
+        // conditional statement that prevents an empty/null input from proceding further with the code
+        // will throw an error in the input is invalid 
         if (!cityInputValue) {
             throw new Error('No input.');
         }
+
+    // the value stored in cityInputValue is passed to a function called onCitySearch
     onCitySearch(cityInputValue) 
 }
 
-// function before it searches for the cities that displays those 5 options
-
+// function that retrieves the latitude and longitude coordinates of a city using the OpenWeatherMap API
 function fetchCityCoordinates(cityInputValue) {
 
-    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q='${cityInputValue}&appid=${myApiKey}&limit=5`;
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q='${cityInputValue}&appid=${myApiKey}`;
+
+    // This line initiates an HTTP request to the URL defined in geoUrl using the fetch function. 
+    // fetch returns a Promise that will resolve with the response to the request
     const geoResponsePromise = fetch(geoUrl);
+
+    // This line sets up a Promise chain. 
+    //It uses the .then method to handle the response from the geoResponsePromise. 
+    // #region .then explanation
+    // Promises have a lifecycle, and .then() is one of the methods for handling the result of a Promise
+    // Chaining .then(): You can chain .then() methods onto a Promise to specify what should happen when the Promise is resolved. 
+    // Each .then() takes a callback function as an argument, and that function will be executed when the Promise resolves successfully. 
+    // #endregion
+    //If the response is not successful (i.e., if response.ok is false), it throws an error by calling response.json(). 
+    //This means that if the API request fails, the promise will be rejected with the JSON representation of the response.
     const geoDataPromise = geoResponsePromise.then(function (response) {
             if (!response.ok) {
                 throw response.json(); 
             }
             return response.json();
         })
+
+    //This line continues the Promise chain by using the .then method on geoDataPromise. 
+    //It extracts the latitude and longitude information from the JSON response (json[0].lat and json[0].lon) and returns it as an object. 
+    //This Promise will resolve with the coordinates data.
     const coordinatesPromise = geoDataPromise.then(function (json) {
         return {
             lat: json[0].lat,
@@ -99,6 +154,7 @@ function fetchWeather(coordinates) {
         })
     return weatherDataPromise; 
 }
+
 function consolidateWeatherData (weatherJson) {
     const weatherData = weatherJson;
     const cityName = weatherData.name;
@@ -180,7 +236,6 @@ function fetchForecast(coordinates) {
 
 function filterForecastData (json) { 
     const forecastDataList = json.list;
-    console.log(forecastDataList)
     const forecastDataArray = [];
         for (let i=0; i < forecastDataList.length; i++) {
             const isEighthIndex = i%8 === 0;
@@ -188,8 +243,7 @@ function filterForecastData (json) {
                 forecastDataArray.push(forecastDataList[i]);
             } 
         }
-        console.log('look here' + forecastDataArray)
-        return forecastDataArray;
+    return forecastDataArray;
 }
 
 function getConsolidatedForecastData (forecastDataList) {
@@ -208,7 +262,6 @@ function parseForecastData(forecastDataArray) {
 }
 
 function renderForecastData (forecastDataArray) {
-    console.log(forecastDataArray);
     const forecastParentNode = $('#five-day-forecast');
     forecastParentNode.empty();
         for (let i=0; i < forecastDataArray.length; i++) {
@@ -244,7 +297,7 @@ function renderForecastDataItem (dataItem){
     const humidityEl = document.createElement('li');
     humidityEl.setAttribute('style', 'list-style:none;');
     humidityEl.innerText = `humidity: ${dataItem.humidity} %`;
-
+    
     forecastChildNodes.appendChild(dateForecastEl);
     forecastChildNodes.appendChild(iconForecastEl);
     forecastChildNodes.appendChild(temperatureEl);

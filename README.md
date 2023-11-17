@@ -50,7 +50,7 @@ City searched:
 History:
 ![historyDisplayed](https://github.com/runningaroundintheabyss/5-day-forecast/assets/127266659/58156e22-1b17-4c9b-a29f-fb709772eb30)
 
-Here is the link: https://runningaroundintheabyss.github.io/5-day-forecast/
+Here is the link: https://ivana-djordjevic.github.io/5-day-forecast/
 
 
 ## Instalations
